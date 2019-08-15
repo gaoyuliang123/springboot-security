@@ -32,7 +32,8 @@ public class UserServiceImplTest {
 
     @Test
     public void insert() {
-        UserInfo userInfo = new UserInfo("admin", "123456", "ADMIN");
+//        UserInfo userInfo = new UserInfo("admin", "123456", "ADMIN");
+        UserInfo userInfo = new UserInfo("18888888888", "123456", "ADMIN");
         userService.insert(userInfo);
     }
 

@@ -1,6 +1,7 @@
 package com.example.springboot.security.exception;
 
-import javax.security.sasl.AuthenticationException;
+
+import org.springframework.security.core.AuthenticationException;
 
 /**
  * @decription: 文件描述
@@ -9,9 +10,9 @@ import javax.security.sasl.AuthenticationException;
  */
 public class ValidateCodeException extends AuthenticationException {
 
-    private static final long serialVersionUID = 5022575393500654459L;
+    private static final long serialVersionUID = -136637405839144078L;
 
-    ValidateCodeException(String message) {
+    public ValidateCodeException(String message) {
         super(message);
     }
 }

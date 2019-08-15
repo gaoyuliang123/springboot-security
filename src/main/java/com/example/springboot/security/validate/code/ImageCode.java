@@ -1,9 +1,10 @@
-package com.example.springboot.security.validate;
+package com.example.springboot.security.validate.code;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -13,7 +14,9 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
-public class ImageCode {
+public class ImageCode implements Serializable {
+
+    private static final long serialVersionUID = -6774521831404859234L;
 
     private BufferedImage image;
 

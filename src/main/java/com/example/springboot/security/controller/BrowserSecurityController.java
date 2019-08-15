@@ -36,4 +36,15 @@ public class BrowserSecurityController {
         }
         return "访问的资源需要身份认证！";
     }
+
+    @GetMapping("/session/invalid")
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public String sessionInvalid() {
+        return "Session已失效，请重新登录！";
+    }
+
+    @GetMapping("/signout/success")
+    public String signout() {
+        return "退出成功，请重新登录!";
+    }
 }

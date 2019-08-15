@@ -1,6 +1,10 @@
 package com.example.springboot.security.controller;
 
-import com.example.springboot.security.validate.ImageCode;
+import com.example.springboot.security.common.Constant;
+import com.example.springboot.security.validate.code.ImageCode;
+import com.example.springboot.security.validate.smscode.SmsCode;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.social.connect.web.HttpSessionSessionStrategy;
 import org.springframework.social.connect.web.SessionStrategy;
 import org.springframework.stereotype.Controller;
@@ -21,26 +25,38 @@ import java.util.Random;
  * @date: 2019-08-14 22:22
  */
 @Controller
+@Slf4j
 public class ValidateController {
-
-    private static final String SESSION_KEY_IMAGE_CODE = "SESSION_KEY_IMAGE_CODE";
 
     private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
 
     /**
-     * 生产验证码
+     * 创建图片验证码
      * @param request
      * @param response
      */
     @GetMapping("/code/image")
-    public void createCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void getImageCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ImageCode imageCode = createImageCode();
-        sessionStrategy.setAttribute(new ServletWebRequest(request), SESSION_KEY_IMAGE_CODE, imageCode);
+        ImageCode imageCodeRedis = new ImageCode(null, imageCode.getCode(), imageCode.getExpireTime());
+        sessionStrategy.setAttribute(new ServletWebRequest(request), Constant.SESSION_KEY_IMAGE_CODE, imageCodeRedis);
         ImageIO.write(imageCode.getImage(), "jpg", response.getOutputStream());
     }
 
-    private ImageCode createImageCode() {
+    @GetMapping("/code/sms")
+    public void getSmsCode(HttpServletRequest request, HttpServletResponse response, String mobile) {
+        SmsCode smsCode = createSMSCode();
+        sessionStrategy.setAttribute(new ServletWebRequest(request), Constant.SESSION_KEY_SMS_CODE + mobile, smsCode);
+        // 发送验证码
+        log.info("手机号={}已发送验证码={}有效时间为60秒", mobile, smsCode.getCode());
+    }
 
+    /**
+     * 生成图片验证码
+     * @return
+     */
+    private ImageCode createImageCode() {
+        // TODO 做成可配置的
         int width = 100; // 验证码图片宽度
         int height = 36; // 验证码图片长度
         int length = 4; // 验证码位数
@@ -86,5 +102,14 @@ public class ValidateController {
         int g = fc + random.nextInt(bc - fc);
         int b = fc + random.nextInt(bc - fc);
         return new Color(r, g, b);
+    }
+
+    /**
+     * 生成短信验证码
+     * @return
+     */
+    public SmsCode createSMSCode() {
+        // TODO 数字位数及失效时间做成可配置的
+        return new SmsCode(RandomStringUtils.randomNumeric(6), 60);
     }
 }
